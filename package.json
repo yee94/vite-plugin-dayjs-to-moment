@@ -1,0 +1,45 @@
+{
+  "name": "vite-plugin-dayjs-to-moment",
+  "version": "1.0.0",
+  "description": "A vite plugin to replace dayjs with moment",
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "types": "./esm/index.d.ts",
+  "scripts": {
+    "dev": "father dev",
+    "build": "father build",
+    "prettier": "pretty-quick --staged"
+  },
+  "files": [
+    "dist",
+    "esm",
+    "cjs"
+  ],
+  "pre-commit": [
+    "prettier"
+  ],
+  "author": {
+    "name": ""
+  },
+  "peerDependencies": {
+    "@types/react": ">=16.8.0 || >=17.0.0",
+    "@types/react-dom": ">=16.8.0 || >=17.0.0",
+    "react": ">=16.8.0 || >=17.0.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "father": "^4.3.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^2.3.2",
+    "pretty-quick": "^1.11.0",
+    "vitest": "^0.33.0"
+  },
+  "sideEffects": false,
+  "repository": "git@github.com:yee94/vite-plugin-dayjs-to-moment.git",
+  "dependencies": {
+    "vite": "^4.4.8",
+    "@umijs/utils": "^4.0.74",
+    "lodash": "^4.17.21",
+    "mlly": "^1.4.0"
+  }
+}

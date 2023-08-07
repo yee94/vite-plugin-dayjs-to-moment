@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "types": ["vitest/globals"],
+    "removeComments": false,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
