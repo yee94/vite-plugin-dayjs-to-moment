@@ -13,6 +13,20 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
   const ignoreSet = new Set();
   const replacedModule = new Map<string, string>();
   let isServe = false;
+
+  const importerFilter = (importer: string) => {
+    // @ant-design/pro NO
+    if (/\/@ant-design\/pro-/.test(importer)) {
+      return false;
+    }
+
+    if (['antd', '@formily/antd-v5', 'rc-picker'].some((item) => importer.includes(`/${item}/`))) {
+      return true;
+    }
+
+    return false;
+  };
+
   return {
     name: 'replace-dayjs-to-moment',
     enforce: 'pre',
@@ -27,6 +41,12 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
                 setup(build) {
                   build.onResolve({ filter }, async (args) => {
                     const id = args.path;
+                    const { importer } = args;
+
+                    if (!importerFilter(importer)) {
+                      ignoreSet.add(id);
+                    }
+
                     const replacedModule = id.replace(new RegExp(filter, 'g'), 'moment');
                     if (ignoreSet.has(id)) {
                       return;
@@ -68,6 +88,11 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
       if (replacedModule.has(source)) {
         const resolveOriginModule = async () =>
           fileURLToPath(await resolve(replacedModule.get(source)!, { url: importer }))!;
+
+        if (!importer || !importerFilter(importer)) {
+          ignoreSet.add(source);
+        }
+
         if (ignoreSet.has(source)) return resolveOriginModule();
 
         try {
