@@ -34,7 +34,7 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
                     try {
                       await resolve(replacedModule, { url: args.importer });
                     } catch (e) {
-                      logger.warn(`Module can not resolved: ${replacedModule}`);
+                      // logger.warn(`Module can not resolved: ${replacedModule}`);
                       ignoreSet.add(id);
                     }
                   });
