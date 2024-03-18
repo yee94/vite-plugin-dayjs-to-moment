@@ -1,4 +1,3 @@
-
 import { logger as _logger } from '@umijs/utils';
 export const logger = {
   warn(...message: any[]) {
@@ -12,7 +11,9 @@ export const importerFilter = (importer: string) => {
     return false;
   }
 
-  if (['antd', '@formily/antd-v5', 'rc-picker'].some((item) => importer.includes(`/${item}/`))) {
+  // @开头主要是兼容 tnpm 的包
+  // eg. /node_modules/_rc-picker@4.3.0@rc-picker/es/generate/dayjs.js
+  if (['antd', '@formily/antd-v5', 'rc-picker'].some((item) => new RegExp(`[@/]${item}/`).test(importer))) {
     return true;
   }
 
