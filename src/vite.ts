@@ -67,8 +67,15 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
       if (isServe) return;
 
       if (replacedModule.has(source)) {
-        const resolveOriginModule = async () =>
-          fileURLToPath(await resolve(replacedModule.get(source)!, { url: importer }))!;
+        const resolveOriginModule = async () => {
+          try {
+            return fileURLToPath(await resolve(replacedModule.get(source)!, { url: importer }))!;
+          } catch (e) {
+            return require.resolve(source, {
+              paths: importer ? [importer] : undefined,
+            });
+          }
+        };
 
         if (!importer || !importerFilter(importer)) {
           ignoreSet.add(source);
