@@ -35,8 +35,7 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
                         path,
                       };
                     } catch (e) {
-                      // logger.warn(`Module can not resolved: ${replacedModule}`);
-                      ignoreSet.add(id);
+                      logger.warn(`Module can not resolved: ${replacedModule}`);
                     }
                   });
                 },
@@ -49,9 +48,9 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
             {
               find: filter,
               replacement: (match, index, matchStr) => {
-                if (ignoreSet.has(matchStr)) {
-                  return match;
-                }
+                // if (ignoreSet.has(matchStr)) {
+                //   return match;
+                // }
 
                 replacedModule.set(matchStr.replace(filter, toLibrary), matchStr);
 
@@ -77,17 +76,18 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
           }
         };
 
-        if (!importer || !importerFilter(importer)) {
-          ignoreSet.add(source);
+        if (!importer) {
+          return resolveOriginModule();
         }
 
-        if (ignoreSet.has(source)) return resolveOriginModule();
+        if (!importerFilter(importer)) {
+          return resolveOriginModule();
+        }
 
         try {
-          await resolve(source, { url: importer });
+          return await resolvePath(source, { url: importer });
         } catch (e) {
           logger.warn(`Module can not resolved: ${source}`);
-          ignoreSet.add(source);
           return resolveOriginModule();
         }
       }
