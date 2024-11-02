@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-dayjs-to-moment",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A vite plugin to replace dayjs with moment",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",

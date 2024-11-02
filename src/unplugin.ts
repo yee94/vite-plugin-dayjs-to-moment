@@ -1,4 +1,4 @@
-import { fileURLToPath, resolve } from 'mlly';
+import { resolve } from 'mlly';
 import { createUnplugin } from 'unplugin';
 import { importerFilter, logger } from './rules';
 

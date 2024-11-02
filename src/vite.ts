@@ -1,4 +1,4 @@
-import { fileURLToPath, resolve } from 'mlly';
+import { fileURLToPath, resolve, resolvePath } from 'mlly';
 import { Plugin, UserConfig, mergeConfig } from 'vite';
 import { importerFilter, logger } from './rules';
 
@@ -25,15 +25,15 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
                     const { importer } = args;
 
                     if (!importerFilter(importer)) {
-                      ignoreSet.add(id);
+                      return;
                     }
 
                     const replacedModule = id.replace(new RegExp(filter, 'g'), 'moment');
-                    if (ignoreSet.has(id)) {
-                      return;
-                    }
                     try {
-                      await resolve(replacedModule, { url: args.importer });
+                      const path = await resolvePath(replacedModule, { url: args.importer });
+                      return {
+                        path,
+                      };
                     } catch (e) {
                       // logger.warn(`Module can not resolved: ${replacedModule}`);
                       ignoreSet.add(id);
