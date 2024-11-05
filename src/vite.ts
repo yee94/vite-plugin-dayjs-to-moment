@@ -1,5 +1,5 @@
 import { fileURLToPath, resolve, resolvePath } from 'mlly';
-import { Plugin, UserConfig, mergeConfig } from 'vite';
+import { type Plugin, type UserConfig, mergeConfig } from 'vite';
 import { importerFilter, logger } from './rules';
 
 export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
@@ -43,53 +43,24 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
             ],
           },
         },
-        resolve: {
-          alias: [
-            {
-              find: filter,
-              replacement: (match, index, matchStr) => {
-                // if (ignoreSet.has(matchStr)) {
-                //   return match;
-                // }
-
-                replacedModule.set(matchStr.replace(filter, toLibrary), matchStr);
-
-                return toLibrary;
-              },
-            },
-          ],
-        },
       });
       return config;
     },
     async resolveId(source, importer, options) {
-      if (isServe) return;
+      if (!importer) {
+        return;
+      }
 
-      if (replacedModule.has(source)) {
-        const resolveOriginModule = async () => {
-          try {
-            return fileURLToPath(await resolve(replacedModule.get(source)!, { url: importer }))!;
-          } catch (e) {
-            return require.resolve(source, {
-              paths: importer ? [importer] : undefined,
-            });
-          }
-        };
+      if (!importerFilter(importer)) {
+        return;
+      }
 
-        if (!importer) {
-          return resolveOriginModule();
-        }
-
-        if (!importerFilter(importer)) {
-          return resolveOriginModule();
-        }
-
-        try {
-          return await resolvePath(source, { url: importer });
-        } catch (e) {
-          logger.warn(`Module can not resolved: ${source}`);
-          return resolveOriginModule();
-        }
+      try {
+        const replacedModule = source.replace(new RegExp(filter, 'g'), 'moment');
+        return await resolvePath(replacedModule, { url: importer });
+      } catch (e) {
+        logger.warn(`Module can not resolved: ${source}`);
+        return;
       }
     },
   } as Plugin;
