@@ -24,11 +24,11 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
                     const id = args.path;
                     const { importer } = args;
 
-                    if (!importerFilter(importer)) {
+                    if (!importer || !importerFilter(importer)) {
                       return;
                     }
 
-                    const replacedModule = id.replace(new RegExp(filter, 'g'), 'moment');
+                    const replacedModule = id.replace(new RegExp(filter, 'g'), toLibrary);
                     try {
                       const path = await resolvePath(replacedModule, { url: args.importer });
                       return {
@@ -51,13 +51,17 @@ export function replaceDayjsToMoment({ toLibrary = 'moment' } = {} as any) {
         return;
       }
 
+      if (!filter.test(source)) {
+        return;
+      }
+
       if (!importerFilter(importer)) {
         return;
       }
 
       try {
-        const replacedModule = source.replace(new RegExp(filter, 'g'), 'moment');
-        return await resolvePath(replacedModule, { url: importer });
+        const replacedModule = source.replace(new RegExp(filter, 'g'), toLibrary);
+        return await resolvePath(replacedModule, { url: importer, extensions: ['.js', '.jsx', '.ts', '.tsx'] });
       } catch (e) {
         logger.warn(`Module can not resolved: ${source}`);
         return;
